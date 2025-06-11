@@ -1,0 +1,16 @@
+# --- C/C++ (CMake / VS) ---
+/out/
+/build/
+/*.exe
+/*.obj
+/*.pdb
+*.VC.db
+.vs/
+
+# --- Python ---
+/venv/
+/api_bridge/__pycache__/
+
+# --- General ---
+.DS_Store
+Thumbs.db
