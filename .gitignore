@@ -16,3 +16,26 @@
 Thumbs.db
 ".idea/" 
 "__pycache__/" 
+
+# --- Windows system files ---
+AppData/
+*.jtx
+
+# --- Visual Studio generated files ---
+*.suo
+*.user
+*.ipch
+*.log
+*.tlog
+*.lastbuildstate
+*.opensdf
+*.sdf
+*.cache
+*.db
+
+# --- CMake cache ---
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
