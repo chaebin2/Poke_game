@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "dao_pokemon.h"
 #include "dao_player.h"
+#include "db.h"
 
 int main() {
     connectDB();

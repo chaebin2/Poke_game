@@ -22,6 +22,7 @@ target_link_libraries(dao PRIVATE mysqlclient)
 add_executable(poke_game 
     backend_c/main.c
     backend_c/src/playerQueue.c
+    backend_c/src/db.c
 )
 target_link_libraries(poke_game PRIVATE dao mysqlclient)
 

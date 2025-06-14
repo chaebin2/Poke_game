@@ -1,4 +1,5 @@
 #include "dao_player.h"
+#include "playerPokemon.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -23,14 +24,22 @@ int load_player_inventory(MYSQL* c, int pid, PlayerPokemon** out, int* cnt) {
     MYSQL_RES* r = mysql_store_result(c);
     int n = (int)mysql_num_rows(r);
     PlayerPokemon* arr = calloc(n, sizeof(PlayerPokemon));
-    for (int i = 0;i < n;++i) {
+    for (int i = 0; i < n; ++i) {
         MYSQL_ROW row = mysql_fetch_row(r);
-        arr[i].id = atoi(row[0]); arr[i].base_id = atoi(row[1]);
-        strncpy(arr[i].name, row[2], sizeof(arr[i].name) - 1);
-        arr[i].level = atoi(row[3]); arr[i].current_hp = atoi(row[4]); arr[i].max_hp = atoi(row[5]);
+        arr[i].base = malloc(sizeof(Pokemon));
+
+        arr[i].base->id = atoi(row[1]);  // player_pokemon.id는 row[0], base id는 row[1]
+        strncpy(arr[i].base->name, row[2], sizeof(arr[i].base->name) - 1);
+        arr[i].level = atoi(row[3]);
+        arr[i].current_hp = atoi(row[4]);
+        arr[i].base->hp = atoi(row[5]);
     }
     mysql_free_result(r);
     *out = arr; *cnt = n; return 0;
 }
 
-void free_player_inventory(PlayerPokemon* l) { free(l); }
+void free_player_inventory(PlayerPokemon* l, int cnt) {
+    for (int i = 0; i < cnt; ++i)
+        free(l[i].base);  // 내부 포인터도 해제
+    free(l);
+}
