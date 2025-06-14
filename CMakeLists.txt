@@ -18,7 +18,10 @@ target_include_directories(dao PRIVATE ${MYSQL_INCLUDE_DIR})
 target_include_directories(dao PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/backend_c/include)
 target_link_libraries(dao PRIVATE mysqlclient)
 # poke_game 角青颇老
-add_executable(poke_game backend_c/main.c)
+add_executable(poke_game 
+    backend_c/main.c
+    backend_c/src/playerQueue.c
+)
 target_link_libraries(poke_game PRIVATE dao mysqlclient)
 
 # test_dao 角青颇老
