@@ -12,6 +12,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/backend_c/include)
 add_library(dao
     backend_c/src/dao_pokemon.c
     backend_c/src/dao_player.c
+    backend_c/src/battle.c
 )
 # 여기 중요! → dao 타겟에 MySQL 포함 경로 명시
 target_include_directories(dao PRIVATE ${MYSQL_INCLUDE_DIR})
