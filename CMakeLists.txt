@@ -14,6 +14,7 @@ add_library(dao
     backend_c/src/dao_player.c
     backend_c/src/battle.c
     backend_c/src/shop.c
+    backend_c/src/player.c
 )
 # 여기 중요! → dao 타겟에 MySQL 포함 경로 명시
 target_include_directories(dao PRIVATE ${MYSQL_INCLUDE_DIR})

@@ -9,3 +9,5 @@ typedef struct Player {
     int pokemon_count;          // 현재 보유 수
     int money;                  // 상점 기능 대비
 } Player;
+
+void showMyPokemonJson(Player* player);
