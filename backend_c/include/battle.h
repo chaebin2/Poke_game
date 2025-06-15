@@ -5,4 +5,6 @@
 #include "Player.h"
 
 PlayerPokemon* createEnemy(Pokemon* base);
-void startBattle(Player* player, PlayerPokemon* enemy);
+int calculateDamage(PlayerPokemon* attacker, PlayerPokemon* defender);
+int startBattle(Player* player, PlayerPokemon* enemy);
+

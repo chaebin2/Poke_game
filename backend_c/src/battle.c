@@ -9,18 +9,18 @@ PlayerPokemon* createEnemy(Pokemon* base) {
     PlayerPokemon* enemy = (PlayerPokemon*)malloc(sizeof(PlayerPokemon));
     enemy->base = base;
     enemy->level = 5 + rand() % 5;
-    enemy->current_hp = base->hp;
+    enemy->current_hp = base->hp*2;
     return enemy;
 }
 
 // 데미지 계산 (기본 공식)
 int calculateDamage(PlayerPokemon* attacker, PlayerPokemon* defender) {
-    int damage = attacker->base->attack - defender->base->defense;
+    int damage = (attacker->base->attack - defender->base->defense) * 2;
     if (damage < 1) damage = 1;
     return damage;
 }
 
-void startBattle(Player* player, PlayerPokemon* enemy) {
+int startBattle(Player* player, PlayerPokemon* enemy) {
     srand((unsigned int)time(NULL));
 
     PlayerPokemonQueue* queue = createPlayerQueue();
@@ -33,18 +33,17 @@ void startBattle(Player* player, PlayerPokemon* enemy) {
     PlayerPokemon* myPoke = dequeuePlayer(queue);
     if (!myPoke) {
         printf("{\"result\":\"no_pokemon\"}\n");
-        return;
+        freePlayerQueue(queue);
+        return 0;
     }
 
     printf("{\"event\":\"battle_start\",\"enemy\":\"%s\"}\n", enemy->base->name);
 
     while (1) {
-        // 현재 상태 출력
         printf("{\"event\":\"turn\",\"my\":\"%s\",\"my_hp\":%d,\"enemy\":\"%s\",\"enemy_hp\":%d}\n",
             myPoke->base->name, myPoke->current_hp,
             enemy->base->name, enemy->current_hp);
 
-        // 선공 판별
         int myFirst = myPoke->base->speed >= enemy->base->speed;
 
         if (myFirst) {
@@ -57,7 +56,8 @@ void startBattle(Player* player, PlayerPokemon* enemy) {
 
             if (enemy->current_hp <= 0) {
                 printf("{\"result\":\"win\",\"enemy\":\"%s\"}\n", enemy->base->name);
-                break;
+                freePlayerQueue(queue);
+                return 1;  // 승리
             }
 
             dmg = calculateDamage(enemy, myPoke);
@@ -80,7 +80,8 @@ void startBattle(Player* player, PlayerPokemon* enemy) {
                 myPoke = dequeuePlayer(queue);
                 if (!myPoke) {
                     printf("{\"result\":\"lose\"}\n");
-                    break;
+                    freePlayerQueue(queue);
+                    return 0;  // 패배
                 }
                 printf("{\"event\":\"send_next\",\"pokemon\":\"%s\"}\n", myPoke->base->name);
                 continue;
@@ -95,7 +96,8 @@ void startBattle(Player* player, PlayerPokemon* enemy) {
 
             if (enemy->current_hp <= 0) {
                 printf("{\"result\":\"win\",\"enemy\":\"%s\"}\n", enemy->base->name);
-                break;
+                freePlayerQueue(queue);
+                return 1;  // 승리
             }
         }
 
@@ -104,11 +106,10 @@ void startBattle(Player* player, PlayerPokemon* enemy) {
             myPoke = dequeuePlayer(queue);
             if (!myPoke) {
                 printf("{\"result\":\"lose\"}\n");
-                break;
+                freePlayerQueue(queue);
+                return 0;  // 패배
             }
             printf("{\"event\":\"send_next\",\"pokemon\":\"%s\"}\n", myPoke->base->name);
         }
     }
-
-    freePlayerQueue(queue);
 }
