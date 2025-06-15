@@ -22,6 +22,17 @@ int main(int argc, char* argv[]) {
         fflush(stdout);
         exit(0);
     }
+    else if (strcmp(argv[1], "buy") == 0 && argc == 3) {
+        int id = atoi(argv[2]);
+
+        initShopPokemon();
+        Player player;
+
+        loadPlayerState(&player);
+        buyPokemon(&player, id); // 기존 함수 그대로 사용
+        savePlayerState(&player);
+        return 0;
+    }
 
     // 테스트 로직 (FastAPI용 아님)
     return 0;

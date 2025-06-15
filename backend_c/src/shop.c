@@ -6,6 +6,7 @@
 
 Pokemon* shopPokemon[SHOP_POKEMON_COUNT];
 
+
 void initShopPokemon() {
     // 샘플 데이터 (나중에 DB 연동으로 대체 가능)
     for (int i = 0; i < SHOP_POKEMON_COUNT; i++) {
@@ -30,31 +31,32 @@ void openShopJson() {
 }
 
 bool buyPokemon(Player* player, int pokemon_id) {
-    if (player->money < 1000) {
-        printf("{\"result\":\"fail\",\"reason\":\"not enough money\"}\n");
+    // 기본 가격 설정 (현재 전부 동일하다고 가정)
+    const int price = 1000;
+
+    // 돈 확인
+    if (player->money < price) {
+        printf("{\"success\": false, \"error\": \"Not enough money\"}\n");
         return false;
     }
 
+    // 포켓몬 찾기
     for (int i = 0; i < SHOP_POKEMON_COUNT; i++) {
         if (shopPokemon[i]->id == pokemon_id) {
-            if (player->pokemon_count >= MAX_PLAYER_POKEMON) {
-                printf("{\"result\":\"fail\",\"reason\":\"party full\"}\n");
-                return false;
-            }
-
             PlayerPokemon* newPoke = malloc(sizeof(PlayerPokemon));
             newPoke->base = shopPokemon[i];
             newPoke->level = 1;
             newPoke->current_hp = shopPokemon[i]->hp;
 
             player->pokemon[player->pokemon_count++] = newPoke;
-            player->money -= 1000;
+            player->money -= price;
 
-            printf("{\"result\":\"success\",\"name\":\"%s\"}\n", shopPokemon[i]->name);
+            printf("{\"success\": true, \"pokemon\": {\"id\": %d, \"name\": \"%s\", \"price\": %d}}\n",
+                shopPokemon[i]->id, shopPokemon[i]->name, price);
             return true;
         }
     }
 
-    printf("{\"result\":\"fail\",\"reason\":\"invalid id\"}\n");
+    printf("{\"success\": false, \"error\": \"Invalid Pokemon ID\"}\n");
     return false;
 }
