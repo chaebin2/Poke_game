@@ -3,21 +3,53 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <mysql.h>
+#include "db.h"
 
 Pokemon* shopPokemon[SHOP_POKEMON_COUNT];
 
 
 void initShopPokemon() {
-    // 샘플 데이터 (나중에 DB 연동으로 대체 가능)
-    for (int i = 0; i < SHOP_POKEMON_COUNT; i++) {
-        shopPokemon[i] = malloc(sizeof(Pokemon));
-        shopPokemon[i]->id = i + 1;
-        snprintf(shopPokemon[i]->name, sizeof(shopPokemon[i]->name), "poke%d", i + 1);
-        shopPokemon[i]->hp = 50 + i * 2;
-        shopPokemon[i]->attack = 10 + i;
-        shopPokemon[i]->defense = 5 + i;
-        shopPokemon[i]->speed = 10 + i;
+
+    MYSQL* conn = connectDB();
+    if (!conn) {
+        fprintf(stderr, "[initShopPokemon] DB 연결 실패\n");
+        return;
     }
+
+    const char* query = "SELECT id, name, hp, attack, defense, speed FROM pokemon LIMIT 10";
+    if (mysql_query(conn, query)) {
+        fprintf(stderr, "[initShopPokemon] 쿼리 실패: %s\n", mysql_error(conn));
+        disconnectDB();
+        return;
+    }
+
+    MYSQL_RES* res = mysql_store_result(conn);
+    if (!res) {
+        fprintf(stderr, "[initShopPokemon] 결과 없음\n");
+        disconnectDB();
+        return;
+    }
+
+    MYSQL_ROW row;
+    int idx = 0;
+    while ((row = mysql_fetch_row(res)) && idx < SHOP_POKEMON_COUNT) {
+
+        Pokemon* p = malloc(sizeof(Pokemon));
+        p->id = atoi(row[0]);
+        strncpy(p->name, row[1], sizeof(p->name) - 1);
+        p->name[sizeof(p->name) - 1] = '\0';
+        p->hp = atoi(row[2]);
+        p->attack = atoi(row[3]);
+        p->defense = atoi(row[4]);
+        p->speed = atoi(row[5]);
+
+        shopPokemon[idx++] = p;
+    }
+
+
+    mysql_free_result(res);
+    disconnectDB();
 }
 
 void openShopJson() {
@@ -44,6 +76,8 @@ bool buyPokemon(Player* player, int pokemon_id) {
     for (int i = 0; i < SHOP_POKEMON_COUNT; i++) {
         if (shopPokemon[i]->id == pokemon_id) {
             PlayerPokemon* newPoke = malloc(sizeof(PlayerPokemon));
+            memset(newPoke, 0, sizeof(PlayerPokemon));
+
             newPoke->base = shopPokemon[i];
             newPoke->level = 1;
             newPoke->current_hp = shopPokemon[i]->hp;

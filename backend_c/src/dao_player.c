@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "db.h"
 
 static void die_query(MYSQL* c, const char* tag) { fprintf(stderr, "[%s] %s\n", tag, mysql_error(c)); }
 
@@ -47,74 +48,89 @@ void free_player_inventory(PlayerPokemon* l, int cnt) {
 }
 
 
-// 로컬 저장용 함수들
-
-#define PLAYER_SAVE_FILE "player.dat"
 
 // 저장
 void savePlayerState(Player* player) {
-    FILE* fp = fopen(PLAYER_SAVE_FILE, "wb");
-    if (!fp) {
-        printf("{\"error\": \"Failed to open save file\"}\n");
+    MYSQL* conn = connectDB();
+    if (!conn) {
+        fprintf(stderr, "[savePlayerState] DB 연결 실패\n");
         return;
     }
 
-    fwrite(&player->money, sizeof(int), 1, fp);
-    fwrite(&player->pokemon_count, sizeof(int), 1, fp);
-
-    for (int i = 0; i < player->pokemon_count; i++) {
-        int poke_id = player->pokemon[i]->base->id;
-        int level = player->pokemon[i]->level;
-        int current_hp = player->pokemon[i]->current_hp;
-        fwrite(&poke_id, sizeof(int), 1, fp);
-        fwrite(&level, sizeof(int), 1, fp);
-        fwrite(&current_hp, sizeof(int), 1, fp);
+    const char* deleteQuery = "DELETE FROM player_pokemon WHERE player_id = 1";
+    if (mysql_query(conn, deleteQuery)) {
+        fprintf(stderr, "[savePlayerState] 삭제 실패: %s\n", mysql_error(conn));
+        disconnectDB();
+        return;
     }
 
-    fclose(fp);
+    for (int i = 0; i < player->pokemon_count; i++) {
+        PlayerPokemon* pp = player->pokemon[i];
+        int pokemon_id = pp->base->id;
+        int current_hp = pp->current_hp;
+        int is_active = pp->is_active;
+
+        char insertQuery[256];
+        snprintf(insertQuery, sizeof(insertQuery),
+            "INSERT INTO player_pokemon (player_id, pokemon_id, current_hp, is_active) "
+            "VALUES (1, %d, %d, %d)",
+            pokemon_id, current_hp, is_active
+        );
+
+        if (mysql_query(conn, insertQuery)) {
+            fprintf(stderr, "[savePlayerState] 저장 실패: %s\n", mysql_error(conn));
+        }
+    }
+
+    disconnectDB();
 }
 
 
 // 불러오기
 void loadPlayerState(Player* player) {
-    FILE* fp = fopen(PLAYER_SAVE_FILE, "rb");
-    if (!fp) {
-        // 파일 없으면 초기화
-        player->money = 5000;
-        player->pokemon_count = 0;
+    MYSQL* conn = connectDB();
+    if (!conn) {
+        fprintf(stderr, "[loadPlayerState] DB 연결 실패\n");
         return;
     }
 
-    fread(&player->money, sizeof(int), 1, fp);
-    fread(&player->pokemon_count, sizeof(int), 1, fp);
+    const char* query = "SELECT pokemon_id, current_hp, is_active FROM player_pokemon WHERE player_id = 1";
+    if (mysql_query(conn, query)) {
+        fprintf(stderr, "[loadPlayerState] 쿼리 실패: %s\n", mysql_error(conn));
+        disconnectDB();
+        return;
+    }
 
-    for (int i = 0; i < player->pokemon_count; i++) {
-        int id, level, hp;
-        fread(&id, sizeof(int), 1, fp);
-        fread(&level, sizeof(int), 1, fp);
-        fread(&hp, sizeof(int), 1, fp);
+    MYSQL_RES* res = mysql_store_result(conn);
+    MYSQL_ROW row;
 
-        // ID 기반으로 shopPokemon에서 포인터 매칭
-        PlayerPokemon* new_poke = (PlayerPokemon*)malloc(sizeof(PlayerPokemon));
-        new_poke->base = NULL;
+    int idx = 0;
+    while ((row = mysql_fetch_row(res)) && idx < MAX_PLAYER_POKEMON) {
+        int pokemon_id = atoi(row[0]);
+        int current_hp = atoi(row[1]);
+        int is_active = atoi(row[2]);
 
-        for (int j = 0; j < SHOP_POKEMON_COUNT; j++) {
-            if (shopPokemon[j]->id == id) {
-                new_poke->base = shopPokemon[j];
-                break;
-            }
-        }
-
-        if (new_poke->base == NULL) {
-            free(new_poke);
+        PlayerPokemon* pp = (PlayerPokemon*)malloc(sizeof(PlayerPokemon));
+        memset(pp, 0, sizeof(PlayerPokemon));
+        pp->base = getPokemonById(pokemon_id);
+        if (!pp->base) {
+            fprintf(stderr, "[loadPlayerState] 포켓몬 로딩 실패: id %d\n", pokemon_id);
+            free(pp);
             continue;
         }
 
-        new_poke->level = level;
-        new_poke->current_hp = hp;
+        pp->current_hp = current_hp;
+        pp->is_active = is_active;
 
-        player->pokemon[i] = new_poke;
+        player->pokemon[idx++] = pp;
     }
 
-    fclose(fp);
+    player->pokemon_count = idx;
+
+    // 임시: 돈은 추후 player 테이블에서 로드 예정
+    player->money = 5000;
+
+    mysql_free_result(res);
+    disconnectDB();
 }
+

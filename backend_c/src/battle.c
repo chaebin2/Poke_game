@@ -15,7 +15,7 @@ PlayerPokemon* createEnemy(Pokemon* base) {
 
 // 데미지 계산 (기본 공식)
 int calculateDamage(PlayerPokemon* attacker, PlayerPokemon* defender) {
-    int damage = (attacker->base->attack - defender->base->defense) * 2;
+    int damage = attacker->base->attack - defender->base->defense;
     if (damage < 1) damage = 1;
     return damage;
 }
