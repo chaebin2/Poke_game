@@ -2,13 +2,31 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>���ϸ� ���� ����</title>
-    <link rel="stylesheet" href="css/style.css" />
+    <title>포켓몬 게임</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <h1>���� - ���ϸ� ����</h1>
-    <div id="user-money">���� �ݾ�: 0 ����Ʈ</div>
-    <div id="pokemon-list"></div>
+    <div id="main-screen">
+        <h1>포켓몬 전투 시뮬레이터</h1>
+
+        <div id="money-display">보유 금액: <span id="money-amount">로딩 중...</span></div>
+
+        <section id="shop-section">
+            <h2>상점</h2>
+            <div id="shop-list">상점 정보를 불러오는 중...</div>
+        </section>
+
+        <section id="player-section">
+            <h2>내 포켓몬</h2>
+            <div id="player-pokemon-list">보유 포켓몬 불러오는 중...</div>
+        </section>
+
+        <section id="battle-section">
+            <h2>전투</h2>
+            <button onclick="startBattle()">전투 시작</button>
+            <div id="battle-log"></div>
+        </section>
+    </div>
 
     <script src="js/main.js"></script>
 </body>

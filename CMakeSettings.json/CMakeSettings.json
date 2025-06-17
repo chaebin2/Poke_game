@@ -2,14 +2,20 @@
 	"configurations": [
 		{
 			"name": "x64-Release",
-			"generator": "Visual Studio 17 2022",
-			"configurationType": "RelWithDebInfo",
+			"generator": "Ninja",
+			"configurationType": "Release",
 			"buildRoot": "${projectDir}\\out\\build\\${name}",
 			"installRoot": "${projectDir}\\out\\install\\${name}",
 			"cmakeCommandArgs": "",
 			"buildCommandArgs": "",
 			"ctestCommandArgs": "",
-			"variables": []
+			"inheritEnvironments": [ "msvc_x64_x64" ],
+			"includePath": [
+				"C:/Users/서민경/Desktop/MySQL/mysql-connector-c-6.1.11/include"
+			],
+			"libraryPath": [
+				"C:/Users/서민경/Desktop/MySQL/mysql-connector-c-6.1.11/lib/vs14"
+			]
 		}
 	]
 }

@@ -51,14 +51,22 @@ void initShopPokemon() {
 }
 
 void openShopJson() {
+    initShopPokemon();
+
+    if (pokemonCount == 0) {
+        printf("{\"shop\":[], \"error\": \"DB 연결 실패 또는 데이터 없음\"}\n");
+        return;
+    }
+
     printf("{\"shop\":[");
-    for (int i = 0; i < SHOP_POKEMON_COUNT; i++) {
+    for (int i = 0; i < pokemonCount; i++) {
         printf("{\"id\":%d,\"name\":\"%s\",\"price\":1000,\"image_url\":\"%s\"}",
             shopPokemon[i]->id, shopPokemon[i]->name, shopPokemon[i]->image_url);
-        if (i < SHOP_POKEMON_COUNT - 1) printf(",");
+        if (i < pokemonCount - 1) printf(",");
     }
     printf("]}\n");
 }
+
 
 bool buyPokemon(Player* player, int pokemon_id) {
     // 기본 가격 설정 (현재 전부 동일하다고 가정)

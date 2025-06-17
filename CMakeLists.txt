@@ -1,14 +1,21 @@
-cmake_minimum_required(VERSION 3.20)
+ï»¿cmake_minimum_required(VERSION 3.20)
 project(PokeGame C)
 
-# MySQL Çì´õ ¸ÕÀú Ãß°¡!
-include_directories("C:/mysql/mysql-connector-c-6.1.11/include")
-link_directories("C:/mysql/mysql-connector-c-6.1.11/lib/vs14")
+set(CMAKE_C_STANDARD 99)
 
-# ÇÁ·ÎÁ§Æ® Çì´õ °æ·Î
+# âœ… ëª…í™•í•˜ê²Œ ê²½ë¡œ ì„¤ì •
+set(MYSQL_ROOT "C:/Users/ì„œë¯¼ê²½/Desktop/MySQL/mysql-connector-c-6.1.11")
+set(MYSQL_INCLUDE_DIR "${MYSQL_ROOT}/include")
+set(MYSQL_LIB_DIR "${MYSQL_ROOT}/lib/vs14")
+
+include_directories(${MYSQL_INCLUDE_DIR})
+link_directories(${MYSQL_LIB_DIR})
+
+
+# í”„ë¡œì íŠ¸ í—¤ë” ê²½ë¡œ
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/backend_c/include)
 
-# DAO ¶óÀÌºê·¯¸®
+# DAO ë¼ì´ë¸ŒëŸ¬ë¦¬ ì •ì˜
 add_library(dao
     backend_c/src/dao_pokemon.c
     backend_c/src/dao_player.c
@@ -16,22 +23,26 @@ add_library(dao
     backend_c/src/shop.c
     backend_c/src/player.c
 )
-# ¿©±â Áß¿ä! ¡æ dao Å¸°Ù¿¡ MySQL Æ÷ÇÔ °æ·Î ¸í½Ã
-target_include_directories(dao PRIVATE ${MYSQL_INCLUDE_DIR})
-target_include_directories(dao PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/backend_c/include)
-target_link_libraries(dao PRIVATE mysqlclient)
-# poke_game ½ÇÇàÆÄÀÏ
+
+# poke_game ì‹¤í–‰íŒŒì¼
 add_executable(poke_game 
     backend_c/main.c
     backend_c/src/playerQueue.c
     backend_c/src/db.c
+    backend_c/src/player.c
+    backend_c/src/shop.c
+    backend_c/src/battle.c
+    backend_c/src/dao_player.c
+    backend_c/src/dao_pokemon.c
 )
-target_link_libraries(poke_game PRIVATE dao mysqlclient)
 
-# test_dao ½ÇÇàÆÄÀÏ
+# testìš© ì‹¤í–‰íŒŒì¼
 add_executable(test_dao test/test_dao.c)
+
+# ë¼ì´ë¸ŒëŸ¬ë¦¬ ë§í¬ (mysqlclient ì‚¬ìš©!)
+target_link_libraries(dao PRIVATE mysqlclient)
+target_link_libraries(poke_game PRIVATE dao mysqlclient)
 target_link_libraries(test_dao PRIVATE dao mysqlclient)
 
-# ½ÇÇà ÆÄÀÏ Ãâ·Â µğ·ºÅÍ¸® ÅëÀÏ
+# ì‹¤í–‰íŒŒì¼ ì¶œë ¥ ë””ë ‰í† ë¦¬ ì„¤ì •
 set_target_properties(poke_game PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set_target_properties(test_dao PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

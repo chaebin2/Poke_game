@@ -1,14 +1,35 @@
-
+﻿
 #include "db.h"
 #include <stdio.h>
+#include <mysql.h> 
 
 static MYSQL* conn = NULL;
 
-MYSQL* connectDB() {
+MYSQL* connectDB(void)
+{
     conn = mysql_init(NULL);
-    mysql_real_connect(conn, "localhost", "root", "1234", "poke_game", 13306, NULL, 0);
+    if (!conn) { fprintf(stderr, "mysql_init 실패\n"); return NULL; }
+
+    mysql_options(conn, MYSQL_READ_DEFAULT_FILE, "no-ssl.cnf");
+
+    /*  ❗️ 6.x 구버전 대응 : 문자열 “DISABLED” 대신 0 */
+    unsigned int ssl_mode = 0;              /* 0 = SSL DISABLED */
+    mysql_optionsv(conn, MYSQL_OPT_SSL_MODE, &ssl_mode);
+
+    /* 또는 연결 플래그에서 SSL 요구를 지워버리기 */
+    unsigned long flags = 0;                /* CLIENT_FLAGS */
+    if (!mysql_real_connect(conn,
+        "localhost", "root", "1234",
+        "poke_game", 3306, NULL, flags)) {
+        fprintf(stderr, "mysql_real_connect 실패: %s\n", mysql_error(conn));
+        return NULL;
+    }
     return conn;
 }
+
+
+ 
+
 
 Pokemon* getPokemonById(int id) {
     if (!conn) return NULL;

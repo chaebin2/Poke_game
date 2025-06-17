@@ -1,84 +1,134 @@
-async function fetchShopPokemon() {
-  try {
-    const res = await fetch("http://127.0.0.1:8000/shop");  // FastAPIø°º≠ ¡¶∞¯«ÿæﬂ «œ¥¬ API
-    const data = await res.json();
+Ôªø// üìÑ frontend/js/main.js
 
-    if (!data.shop) return;
+document.addEventListener("DOMContentLoaded", async () => {
+  switchBackground("default");
+  await loadMoney();
+  await loadShop();
+  await loadMyPokemon();
+});
 
-    const container = document.getElementById("pokemon-list");
-    data.shop.forEach(pokemon => {
-      const card = document.createElement("div");
-      card.className = "pokemon-card";
+function switchBackground(type) {
+  const body = document.body;
+  body.classList.remove("default-background", "shop-background", "battle-background");
 
-      card.innerHTML = `
-        <img src="${pokemon.image_url}" alt="${pokemon.name}" />
-        <h3>${pokemon.name}</h3>
-        <p>HP: ${pokemon.hp}</p>
-        <p>ATK: ${pokemon.attack}</p>
-        <p>DEF: ${pokemon.defense}</p>
-        <p>SPD: ${pokemon.speed}</p>
-        <p>∞°∞›: ${pokemon.price} ∆˜¿Œ∆Æ</p>
-        <button onclick="buyPokemon(${pokemon.id})">±∏∏≈</button>
-      `;
-
-      container.appendChild(card);
-    });
-  } catch (err) {
-    console.error("ªÛ¡° µ•¿Ã≈Õ ∫“∑Øø¿±‚ Ω«∆–:", err);
+  switch (type) {
+    case "shop":
+      body.classList.add("shop-background");
+      break;
+    case "battle":
+      body.classList.add("battle-background");
+      break;
+    default:
+      body.classList.add("default-background");
   }
 }
 
-async function buyPokemon(pokemonId) {
-  const res = await fetch("http://127.0.0.1:8000/buy", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ pokemon_id: pokemonId }),
-  });
-
-  const result = await res.json();
-  alert(result.message || "±∏∏≈ √≥∏Æ øœ∑·");
-}
-
-window.onload = fetchShopPokemon;
-async function fetchShopPokemon() {
+async function loadMoney() {
   try {
-    const res = await fetch("http://127.0.0.1:8000/shop");  // FastAPIø°º≠ ¡¶∞¯«ÿæﬂ «œ¥¬ API
+    const res = await fetch("http://localhost:8000/money");
     const data = await res.json();
-
-    if (!data.shop) return;
-
-    const container = document.getElementById("pokemon-list");
-    data.shop.forEach(pokemon => {
-      const card = document.createElement("div");
-      card.className = "pokemon-card";
-
-      card.innerHTML = `
-        <img src="${pokemon.image_url}" alt="${pokemon.name}" />
-        <h3>${pokemon.name}</h3>
-        <p>HP: ${pokemon.hp}</p>
-        <p>ATK: ${pokemon.attack}</p>
-        <p>DEF: ${pokemon.defense}</p>
-        <p>SPD: ${pokemon.speed}</p>
-        <p>∞°∞›: ${pokemon.price} ∆˜¿Œ∆Æ</p>
-        <button onclick="buyPokemon(${pokemon.id})">±∏∏≈</button>
-      `;
-
-      container.appendChild(card);
-    });
+    document.getElementById("money-amount").innerText = `${data.money}G`;
   } catch (err) {
-    console.error("ªÛ¡° µ•¿Ã≈Õ ∫“∑Øø¿±‚ Ω«∆–:", err);
+    console.error("/money Ïó∞Îèô Ïò§Î•ò", err);
   }
 }
 
-async function buyPokemon(pokemonId) {
-  const res = await fetch("http://127.0.0.1:8000/buy", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ pokemon_id: pokemonId }),
-  });
-
-  const result = await res.json();
-  alert(result.message || "±∏∏≈ √≥∏Æ øœ∑·");
+async function loadShop() {
+  try {
+    switchBackground("shop");
+    const res = await fetch("http://localhost:8000/shop");
+    const data = await res.json();
+    renderShop(data.shop);
+  } catch (err) {
+    console.error("/shop Ïó∞Îèô Ïò§Î•ò", err);
+  }
 }
 
-window.onload = fetchShopPokemon;
+function renderShop(shopList) {
+  const shopContainer = document.getElementById("shop-list");
+  shopContainer.innerHTML = "";
+  shopList.forEach((pokemon) => {
+    const card = document.createElement("div");
+    card.className = "shop-card";
+    card.innerHTML = `
+      <img src="${pokemon.image_url}" alt="${pokemon.name}" />
+      <h3>${pokemon.name}</h3>
+      <p>Í∞ÄÍ≤©: ${pokemon.price}G</p>
+      <button onclick="buyPokemon(${pokemon.id})">Íµ¨Îß§</button>
+    `;
+    shopContainer.appendChild(card);
+  });
+}
+
+async function buyPokemon(id) {
+  try {
+    const res = await fetch(`http://localhost:8000/buy/${id}`);
+    const data = await res.json();
+    alert("Íµ¨Îß§ ÏôÑÎ£å!");
+    await loadMoney();
+    await loadMyPokemon();
+  } catch (err) {
+    console.error("/buy/{id} Ïó∞Îèô Ïò§Î•ò", err);
+  }
+}
+
+async function loadMyPokemon() {
+  try {
+    const res = await fetch("http://localhost:8000/mypokemon");
+    const data = await res.json();
+    renderMyPokemon(data.pokemon);
+  } catch (err) {
+    console.error("/mypokemon Ïó∞Îèô Ïò§Î•ò", err);
+  }
+}
+
+function renderMyPokemon(list) {
+  const container = document.getElementById("player-pokemon-list");
+  container.innerHTML = "";
+  list.forEach((p, idx) => {
+    const div = document.createElement("div");
+    div.className = "my-pokemon";
+    div.innerText = `${idx + 1}. ${p.name} (Lv.${p.level})`;
+    div.onclick = () => selectPokemon(p.id);
+    container.appendChild(div);
+  });
+}
+
+function selectPokemon(id) {
+  localStorage.setItem("selectedPokemonId", id);
+  alert(`Ìè¨ÏºìÎ™¨ ${id}Î≤à ÏÑ†ÌÉùÎê®!`);
+  renderSelectedPokemon(id);  // ÏÑ†ÌÉùÎêú Ìè¨ÏºìÎ™¨ ÌëúÏãú Ìï®Ïàò Ìò∏Ï∂ú
+}
+
+async function renderSelectedPokemon(id) {
+  try {
+    const res = await fetch("http://localhost:8000/mypokemon");
+    const data = await res.json();
+    const selected = data.pokemon.find(p => p.id === id);
+    const container = document.getElementById("selected-pokemon");
+    if (selected) {
+      container.innerHTML = `
+        <img src="${selected.image_url}" alt="${selected.name}" />
+        <p>${selected.name} (Lv.${selected.level})</p>
+      `;
+    }
+  } catch (err) {
+    console.error("ÏÑ†ÌÉùÎêú Ìè¨ÏºìÎ™¨ Î†åÎçîÎßÅ Ïò§Î•ò", err);
+  }
+}
+
+async function startBattle() {
+  try {
+    switchBackground("battle");
+    const res = await fetch("http://localhost:8000/battle");
+    const data = await res.json();
+    renderBattleLog(data);
+  } catch (err) {
+    console.error("/battle Ïó∞Îèô Ïò§Î•ò", err);
+  }
+}
+
+function renderBattleLog(logData) {
+  const log = document.getElementById("battle-log");
+  log.innerText = logData.output || JSON.stringify(logData);
+}

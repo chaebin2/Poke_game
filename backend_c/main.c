@@ -12,7 +12,9 @@
     #include <fcntl.h>
     #include <io.h>
 
+
 int main(int argc, char* argv[]) {
+    
     _setmode(_fileno(stdout), _O_BINARY);
     setvbuf(stdout, NULL, _IONBF, 0);
 
