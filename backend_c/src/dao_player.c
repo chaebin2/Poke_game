@@ -57,6 +57,7 @@ void savePlayerState(Player* player) {
         return;
     }
 
+    // 기존 포켓몬 정보 삭제
     const char* deleteQuery = "DELETE FROM player_pokemon WHERE player_id = 1";
     if (mysql_query(conn, deleteQuery)) {
         fprintf(stderr, "[savePlayerState] 삭제 실패: %s\n", mysql_error(conn));
@@ -64,6 +65,7 @@ void savePlayerState(Player* player) {
         return;
     }
 
+    // 포켓몬 정보 저장
     for (int i = 0; i < player->pokemon_count; i++) {
         PlayerPokemon* pp = player->pokemon[i];
         int pokemon_id = pp->base->id;
@@ -82,6 +84,14 @@ void savePlayerState(Player* player) {
         }
     }
 
+    // 돈 저장
+    char updateMoneyQuery[128];
+    snprintf(updateMoneyQuery, sizeof(updateMoneyQuery),
+        "UPDATE player SET money = %d WHERE id = 1", player->money);
+    if (mysql_query(conn, updateMoneyQuery)) {
+        fprintf(stderr, "[savePlayerState] 돈 저장 실패: %s\n", mysql_error(conn));
+    }
+
     disconnectDB();
 }
 
@@ -94,6 +104,7 @@ void loadPlayerState(Player* player) {
         return;
     }
 
+    // 포켓몬 불러오기
     const char* query = "SELECT pokemon_id, current_hp, is_active FROM player_pokemon WHERE player_id = 1";
     if (mysql_query(conn, query)) {
         fprintf(stderr, "[loadPlayerState] 쿼리 실패: %s\n", mysql_error(conn));
@@ -124,13 +135,26 @@ void loadPlayerState(Player* player) {
 
         player->pokemon[idx++] = pp;
     }
-
     player->pokemon_count = idx;
+    mysql_free_result(res);
 
-    // 임시: 돈은 추후 player 테이블에서 로드 예정
-    player->money = 5000;
+    // 돈 불러오기
+    const char* moneyQuery = "SELECT money FROM player WHERE id = 1";
+    if (mysql_query(conn, moneyQuery)) {
+        fprintf(stderr, "[loadPlayerState] 돈 쿼리 실패: %s\n", mysql_error(conn));
+        disconnectDB();
+        return;
+    }
+
+    res = mysql_store_result(conn);
+    if ((row = mysql_fetch_row(res))) {
+        player->money = atoi(row[0]);
+    }
+    else {
+        fprintf(stderr, "[loadPlayerState] 돈 로딩 실패: 결과 없음\n");
+        player->money = 5000; // 기본값
+    }
 
     mysql_free_result(res);
     disconnectDB();
 }
-

@@ -5,19 +5,22 @@
 #include <string.h>
 #include <mysql.h>
 #include "db.h"
+#include "pokemon.h"
+
+int pokemonCount = 0;
 
 Pokemon* shopPokemon[SHOP_POKEMON_COUNT];
 
 
-void initShopPokemon() {
 
+void initShopPokemon() {
     MYSQL* conn = connectDB();
     if (!conn) {
         fprintf(stderr, "[initShopPokemon] DB 연결 실패\n");
         return;
     }
 
-    const char* query = "SELECT id, name, hp, attack, defense, speed FROM pokemon LIMIT 10";
+    const char* query = "SELECT id, name, hp, attack, defense, speed, image_url FROM pokemon LIMIT 10";
     if (mysql_query(conn, query)) {
         fprintf(stderr, "[initShopPokemon] 쿼리 실패: %s\n", mysql_error(conn));
         disconnectDB();
@@ -25,28 +28,23 @@ void initShopPokemon() {
     }
 
     MYSQL_RES* res = mysql_store_result(conn);
-    if (!res) {
-        fprintf(stderr, "[initShopPokemon] 결과 없음\n");
-        disconnectDB();
-        return;
-    }
-
     MYSQL_ROW row;
-    int idx = 0;
-    while ((row = mysql_fetch_row(res)) && idx < SHOP_POKEMON_COUNT) {
 
+    int i = 0;
+    while ((row = mysql_fetch_row(res)) && i < SHOP_POKEMON_COUNT) {
         Pokemon* p = malloc(sizeof(Pokemon));
         p->id = atoi(row[0]);
         strncpy(p->name, row[1], sizeof(p->name) - 1);
-        p->name[sizeof(p->name) - 1] = '\0';
         p->hp = atoi(row[2]);
         p->attack = atoi(row[3]);
         p->defense = atoi(row[4]);
         p->speed = atoi(row[5]);
+        strncpy(p->image_url, row[6], sizeof(p->image_url) - 1);
 
-        shopPokemon[idx++] = p;
+        shopPokemon[i++] = p;
     }
 
+    pokemonCount = i;
 
     mysql_free_result(res);
     disconnectDB();
@@ -55,8 +53,8 @@ void initShopPokemon() {
 void openShopJson() {
     printf("{\"shop\":[");
     for (int i = 0; i < SHOP_POKEMON_COUNT; i++) {
-        printf("{\"id\":%d,\"name\":\"%s\",\"price\":1000}",
-            shopPokemon[i]->id, shopPokemon[i]->name);
+        printf("{\"id\":%d,\"name\":\"%s\",\"price\":1000,\"image_url\":\"%s\"}",
+            shopPokemon[i]->id, shopPokemon[i]->name, shopPokemon[i]->image_url);
         if (i < SHOP_POKEMON_COUNT - 1) printf(",");
     }
     printf("]}\n");
