@@ -5,6 +5,9 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btn) btn.onclick = startBattle;
 });
 
+document.getElementById("main-screen").style.display = "none";
+document.getElementById("battle-screen").style.display = "block";
+
 // 기존 함수 유지 + 확장
 async function startBattle() {
   switchBackground?.("battle");

@@ -18,6 +18,43 @@ body {
         background: url("../images/fightback.jpg") center/cover no-repeat;
     }
 
+#start-screen {
+    background-image: url("../images/mainbackground.jpg");
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#main-screen {
+    background-image: url("../images/mainbackground.jpg");
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#battle-screen {
+    display: none;
+    background-image: url("../images/fightback.jpg");
+    background-size: cover;
+    background-position: center;
+    padding: 20px;
+    color: white;
+}
+
+.battle-area {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+
 section {
     padding: 40px;
     color: #fff;
@@ -33,3 +70,27 @@ button {
 .hidden {
     display: none;
 }
+
+#shop-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.shop-card {
+    width: 150px;
+    background: rgba(255, 255, 255, 0.85);
+    border-radius: 10px;
+    text-align: center;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.shop-card img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
