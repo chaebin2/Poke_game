@@ -1,6 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 import subprocess
 import json
 
@@ -8,7 +10,13 @@ app = FastAPI()
 
 C_EXEC_PATH = r"C:\Users\서민경\Poke_game\out\build\x64-Debug\bin\poke_game.exe"
 
+# ── 정적 폴더 mounts  (frontend 폴더 경로 맞춰서) ──
+app.mount("/static", StaticFiles(directory="frontend"), name="static")
 
+# ── /  요청 시 index.html 반환 ──
+@app.get("/", response_class=FileResponse)
+def root():
+    return "frontend/index.html"
 
 app.add_middleware(
     CORSMiddleware,

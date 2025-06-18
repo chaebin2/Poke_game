@@ -129,3 +129,8 @@ button {
     object-fit: contain;
     margin-top: 4px
 }
+
+.to-main {
+    margin-top: 12px;
+    padding: 8px 18px
+}

@@ -16,7 +16,6 @@ function switchBackground(type) {
   );
 }
 
-/* ---------- 게임 시작 후 ---------- */
 async function initGame() {
   // 화면 전환
   document.getElementById("start-screen").classList.add("hidden");
@@ -24,23 +23,36 @@ async function initGame() {
   switchBackground("default");
 
   // 네비 버튼
-  document.getElementById("nav-shop-btn").onclick   = () => showSection("shop");
+  document.getElementById("nav-home-btn").onclick  = () => showSection("home");
+  document.getElementById("nav-shop-btn").onclick  = () => showSection("shop");
   document.getElementById("nav-battle-btn").onclick = tryEnterBattle;
 
-  // 첫 데이터 로드
+  /* 섹션 내부 '메인으로' 버튼 */
+  document.getElementById("shop-to-main-btn").onclick =
+  document.getElementById("battle-to-main-btn").onclick = () => showSection("home");
+
+  // 첫 데이터
   await loadMoney();
-  await loadShop();        // 배경만 변경, 섹션은 아직 숨김
-  await loadMyPokemon();   // 보유 수 세팅 & 전투 버튼 활성/비활성
-  showSection("shop");     // 메인 진입 시 상점 화면
+  await loadShop();       // shop 리스트만 채움, 화면은 아직 숨김
+  await loadMyPokemon();  // myPokemonCount 갱신 + 전투 버튼 활성/비활성
+  showSection("shop");    // 메인 진입 시 상점 탭
 }
+
 
 /* ---------- 섹션 토글 ---------- */
 function showSection(name){
-  ["shop","battle"].forEach(id=>{
-    document.getElementById(id+"-section").classList.toggle("hidden", id!==name);
-  });
-  if(name==="shop")   switchBackground("shop");
-  if(name==="battle") switchBackground("battle");
+  const shop   = document.getElementById("shop-section");
+  const battle = document.getElementById("battle-section");
+
+  if(name==="shop"){      shop.classList.remove("hidden");  battle.classList.add("hidden");  switchBackground("shop"); }
+  else if(name==="battle"){ shop.classList.add("hidden");   battle.classList.remove("hidden"); switchBackground("battle"); }
+  else{ /* home */        shop.classList.add("hidden");    battle.classList.add("hidden");   switchBackground("default"); }
+
+  /* 전투가 끝나면 ‘메인으로’ 버튼 보이기 위해 상태 초기화 */
+  if(name!=="battle"){
+    document.getElementById("battle-to-main-btn").classList.add("hidden");
+    document.getElementById("battle-start-btn").disabled = false;
+  }
 }
 
 /* ---------- 전투 버튼 진입 검사 ---------- */
