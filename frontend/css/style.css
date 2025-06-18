@@ -1,136 +1,35 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap");
+
 body {
-    font-family: 'Arial', sans-serif;
-    margin: 0;
-    padding: 0;
-    color: white;
-    background-size: cover;
-    background-position: center;
-    transition: background-image 0.5s ease-in-out;
+    font-family: "Noto Sans KR","Malgun Gothic",sans-serif;
+    margin: 0
 }
 
-#main-screen {
-    padding: 20px;
-}
+    /* 화면 전환용 배경 */
+    body.default-background {
+        background: url("../images/mainbackground.jpg") center/cover no-repeat;
+    }
 
-body.default-background {
-    background-image: url("../images/mainbackground.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
-}
+    body.shop-background {
+        background: url("../images/store.jpg") center/cover no-repeat;
+    }
 
-body.shop-background {
-    background-image: url("../images/store.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
-}
-
-body.battle-background {
-    background-image: url("../images/fightback.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
-}
-
-h1, h2 {
-    text-shadow: 1px 1px 2px black;
-}
+    body.battle-background {
+        background: url("../images/fightback.jpg") center/cover no-repeat;
+    }
 
 section {
-    margin-bottom: 30px;
-    padding: 15px;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 8px;
+    padding: 40px;
+    color: #fff;
+    text-shadow: 1px 1px 2px #000;
 }
 
 button {
     padding: 10px 20px;
-    font-size: 1rem;
-    margin-top: 10px;
+    margin: 6px;
     cursor: pointer;
-}
-
-#nav-btns {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    margin: 16px 0
-}
-
-#nav-btns button {
-    min-width: 120px
-}
-
-
-.shop-card {
-    border: 1px solid #ccc;
-    padding: 10px;
-    width: 160px;
-    margin: 10px;
-    display: inline-block;
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.8);
-}
-
-.my-pokemon {
-    margin: 5px;
-    padding: 5px;
-    border: 1px solid #444;
-    background-color: rgba(240, 240, 240, 0.8);
-    cursor: pointer;
-}
-
-.my-pokemon.selected { outline: 2px solid #ffcf00; }
-
-#battle-area {
-    display: flex;
-    justify-content: space-around;
-    margin: 20px 0;
-}
-
-.battle-side {
-    text-align: center;
-    width: 40%;
-}
-
-.hp-wrap {
-    width: 100%;
-    height: 14px;
-    background: #555;
-    border-radius: 6px;
-}
-
-.hp-bar {
-    height: 100%;
-    background: #4caf50;
-    border-radius: 6px;
-    transition: width .3s
 }
 
 .hidden {
     display: none;
-}
-#start-screen{
-  text-align:center;
-  margin-top:25vh;
-}
-
-#start-screen button{
-  padding:14px 28px;
-  font-size:1.2rem;
-  cursor:pointer;
-}
-#selected-pokemon {
-    text-align: center;
-    margin-top: 12px
-}
-
-#selected-pokemon img {
-    width: 80px;
-    height: 80px;
-    object-fit: contain;
-    margin-top: 4px
-}
-
-.to-main {
-    margin-top: 12px;
-    padding: 8px 18px
 }
