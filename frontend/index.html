@@ -1,33 +1,53 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <title>포켓몬 게임</title>
-    <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8" />
+    <title>포켓몬 전투 게임</title>
+    <link rel="stylesheet" href="css/style.css" />
 </head>
-<body>
+<body class="default-background">
     <div id="main-screen">
         <h1>포켓몬 전투 시뮬레이터</h1>
 
         <div id="money-display">보유 금액: <span id="money-amount">로딩 중...</span></div>
+        <div id="selected-pokemon"></div>
 
+        <!-- ─── 상점 ───────────────── -->
         <section id="shop-section">
             <h2>상점</h2>
             <div id="shop-list">상점 정보를 불러오는 중...</div>
         </section>
 
+        <!-- ─── 내 포켓몬 ─────────── -->
         <section id="player-section">
             <h2>내 포켓몬</h2>
             <div id="player-pokemon-list">보유 포켓몬 불러오는 중...</div>
         </section>
 
+        <!-- ─── 전투 ───────────────── -->
         <section id="battle-section">
             <h2>전투</h2>
-            <button onclick="startBattle()">전투 시작</button>
-            <div id="battle-log"></div>
+            <button id="battle-start-btn">전투 시작</button>
+
+            <div id="battle-area" class="hidden">
+                <div class="battle-side">
+                    <h3 id="enemy-name"></h3>
+                    <img id="enemy-img" src="" alt="enemy" />
+                    <div class="hp-wrap"><div id="enemy-hp-bar" class="hp-bar"></div></div>
+                </div>
+
+                <div class="battle-side">
+                    <h3 id="player-name"></h3>
+                    <img id="player-img" src="" alt="player" />
+                    <div class="hp-wrap"><div id="player-hp-bar" class="hp-bar"></div></div>
+                </div>
+            </div>
+
+            <pre id="battle-log"></pre>
         </section>
     </div>
 
+    <!-- JS -->
     <script src="js/main.js"></script>
     <script src="js/shop.js"></script>
     <script src="js/player.js"></script>

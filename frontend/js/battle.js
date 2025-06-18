@@ -1,30 +1,33 @@
-/* global switchBackground */
+ï»¿/* global switchBackground */
 
 document.addEventListener("DOMContentLoaded", () => {
-  const btn = document.querySelector("#battle-section button");
+  const btn = document.getElementById("battle-start-btn") || document.querySelector("#battle-section button");
   if (btn) btn.onclick = startBattle;
 });
 
+// ê¸°ì¡´ í•¨ìˆ˜ ìœ ì§€ + í™•ìž¥
 async function startBattle() {
-  switchBackground("battle");
+  switchBackground?.("battle");
+  const area   = document.getElementById("battle-area");
   const logBox = document.getElementById("battle-log");
-  logBox.innerText = "ÀüÅõ Áß...";
+  if (area) area.classList.remove("hidden");
+  logBox.innerText = "ì „íˆ¬ ì¤‘...";
+
   try {
-    const res = await fetch("http://localhost:8000/battle");
+    const res  = await fetch("http://localhost:8000/battle");
     const data = await res.json();
-    renderBattleLog(data);
+    renderBattleLog(data);      // âžœ ê¸°ì¡´ í•¨ìˆ˜(ì•„ëž˜ ìˆ˜ì •)
   } catch (err) {
-    console.error("[battle] /battle ½ÇÆÐ", err);
-    logBox.innerText = "ÀüÅõ ÁøÇà Áß ¿À·ù ¹ß»ý!";
+    console.error("[battle] /battle ì‹¤íŒ¨", err);
+    logBox.innerText = "ì „íˆ¬ ì§„í–‰ ì¤‘ ì˜¤ë¥˜ ë°œìƒ!";
   }
 }
 
+/* ----------  ì—…ë°ì´íŠ¸ëœ renderBattleLog ---------- */
 function renderBattleLog(data) {
-  const logBox = document.getElementById("battle-log");
-  if (data.output) {
-    // C ¹é¿£µå°¡ ¹®ÀÚ¿­ ·Î±×¸¦ ³Ñ°ÜÁÖ´Â ÇüÅÂ
-    logBox.innerText = data.output;
-  } else {
-    logBox.innerText = JSON.stringify(data, null, 2);
-  }
-}
+  updateBattleView(data);   // ìƒˆ í•¨ìˆ˜: HP/ì´ë¯¸ì§€ í‘œì‹œ
+
+  const box = document.getElementById("battle-log");
+  if (data.turns && Array.isArray(data.turns)) {
+    // turns ë°°ì—´ì´ ì˜¬ ë•Œ => ëˆ„ì  ë¡œê·¸
+    data.turns.forEach((t) => box.innerText
