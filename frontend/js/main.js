@@ -1,25 +1,17 @@
-﻿/* ───── 화면 전환 ───── */
-function openMain(){
-  setScreen("main");
-}
-function openShop(){
-  setScreen("shop");
-  loadShop();          // API /shop
-}
-function openBattle(){
-  // 포켓몬이 0마리면 경고 후 메인으로
-  fetch("/mypokemon")
-    .then(r=>r.json()).then(list=>{
-      if(!list.mypokemon || list.mypokemon.length===0){
-        alert("포켓몬이 없습니다! 상점에서 먼저 구입하세요.");
-        openShop(); return;
-      }
-      setScreen("battle");
-      startBattle();
-    });
+﻿function openMain() { setScreen("main"); loadMoney(); }
+function openShop() { setScreen("shop"); loadShop(); }
+function openBattle() {
+  fetch("/mypokemon").then(r=>r.json()).then(js=>{
+    if(!js.mypokemon || js.mypokemon.length===0){
+      alert("포켓몬이 없습니다. 상점에서 구매하세요.");
+      openShop(); return;
+    }
+    setScreen("battle");
+    startBattle();  // 실제 전투 로직
+  });
 }
 
-function setScreen(target){
+/*function setScreen(target){
   document.body.className = {
     main:"default-background",
     shop:"shop-background",
@@ -31,6 +23,17 @@ function setScreen(target){
       "hidden", id!==target
     );
   });
+}*/
+function setScreen(screen){
+  document.getElementById("main-screen").style.display = screen === "main" ? "block" : "none";
+  document.getElementById("shop-screen").style.display = screen === "shop" ? "block" : "none";
+  document.getElementById("battle-screen").style.display = screen === "battle" ? "block" : "none";
+
+  document.body.className = {
+    main: "default-background",
+    shop: "shop-background",
+    battle: "battle-background"
+  }[screen];
 }
 
 /* ───── 상점 로드 & 구매 ───── */

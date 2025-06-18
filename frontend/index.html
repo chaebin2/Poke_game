@@ -1,33 +1,48 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8">
     <title>포켓몬 전투 시뮬레이터</title>
     <link rel="stylesheet" href="css/style.css" />
 </head>
 <body class="default-background">
 
-    <!-- ① 메인 화면 -->
-    <section id="main-screen">
+    <!-- 🟩 메인 화면 -->
+    <div id="main-screen">
         <h1>포켓몬 전투 시뮬레이터</h1>
-        <button onclick="openShop()">상점</button>
+        <div id="user-money">보유 금액: <span id="money-amount">0</span> 포인트</div>
         <button onclick="openBattle()">전투하기</button>
-    </section>
+        <button onclick="openShop()">상점</button>
+    </div>
 
-    <!-- ② 상점 화면 -->
-    <section id="shop-screen" class="hidden">
+    <!-- 🟦 상점 화면 -->
+    <div id="shop-screen" style="display:none;">
         <h2>상점</h2>
-        <div id="shop-list">상점 정보를 불러오는 중…</div>
+        <div id="shop-list">상점 정보를 불러오는 중...</div>
         <button onclick="openMain()">메인으로</button>
-    </section>
+    </div>
 
-    <!-- ③ 전투 화면 -->
-    <section id="battle-screen" class="hidden">
+    <!-- 🟥 전투 화면 -->
+    <div id="battle-screen" style="display:none;">
         <h2>전투</h2>
-        <div id="battle-log"></div>
+        <div class="battle-area">
+            <div>
+                <div>내 포켓몬</div>
+                <img src="images/player.png" alt="내 포켓몬" class="pokemon" id="player-pokemon" />
+                <div class="hp-bar"><div class="hp" id="player-hp">플레이어 HP: 100</div></div>
+            </div>
+            <div>
+                <div>상대 포켓몬</div>
+                <img src="" alt="상대 포켓몬" class="pokemon" id="enemy-pokemon" />
+                <div class="hp-bar"><div class="hp" id="enemy-hp">적 HP: 100</div></div>
+            </div>
+        </div>
+
+        <div id="battle-result" style="display:none; font-size:24px; font-weight:bold; margin-top:20px; color:#fff;"></div>
+
         <button id="attack-btn" onclick="attackTurn()">공격하기</button>
-        <button id="battle-back-btn" class="hidden" onclick="openMain()">메인으로</button>
-    </section>
+        <button class="back-to-main" onclick="openMain()" style="display:none;">메인으로</button>
+    </div>
 
     <script src="js/main.js"></script>
 </body>
