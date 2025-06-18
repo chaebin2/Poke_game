@@ -5,44 +5,41 @@
     <title>포켓몬 전투 게임</title>
     <link rel="stylesheet" href="css/style.css" />
 </head>
-<body class="default-background">
-    <div id="main-screen">
 
+<body class="default-background">
+    <!-- ① START -->
+    <section id="start-screen">
+        <h1>포켓몬 전투 시뮬레이터</h1>
+        <button id="start-btn">게임 시작</button>
+    </section>
+
+    <!-- ② MAIN (처음엔 hidden) -->
+    <div id="main-screen" class="hidden">
         <h1>포켓몬 전투 시뮬레이터</h1>
 
-        <div id="money-display">보유 금액: <span id="money-amount">로딩 중...</span></div>
+        <div id="money-display">보유 금액: <span id="money-amount">0G</span></div>
         <div id="selected-pokemon"></div>
 
-        <!-- ─── ① 시작 화면 ─── -->
-        <section id="start-screen">
-            <h1>포켓몬 전투 시뮬레이터</h1>
-            <button id="start-btn">게임 시작</button>
-        </section>
-
-        <!-- ─── ② 메인 화면 ─── -->
-        <div id="main-screen" class="hidden"><!-- ← 처음엔 숨김 -->
-            <div id="money-display">보유 금액: <span id="money-amount">0G</span></div>
-            <div id="selected-pokemon"></div>
-
-        <!-- … main-screen 안쪽 상단에 내비게이션 버튼 2개 추가 -->
+        <!-- 상점/전투 네비 -->
         <div id="nav-btns">
             <button id="nav-shop-btn">상점</button>
-            <button id="nav-battle-btn">전투하기</button>
+            <button id="nav-battle-btn" disabled>전투하기</button>
         </div>
-        <!-- ─── 상점 ───────────────── -->
-        <section id="shop-section">
+
+        <!-- 상점 -->
+        <section id="shop-section" class="hidden">
             <h2>상점</h2>
-            <div id="shop-list">상점 정보를 불러오는 중...</div>
+            <div id="shop-list"></div>
         </section>
 
-        <!-- ─── 내 포켓몬 ─────────── -->
+        <!-- 내 포켓몬 (항상 표시) -->
         <section id="player-section">
             <h2>내 포켓몬</h2>
-            <div id="player-pokemon-list">보유 포켓몬 불러오는 중...</div>
+            <div id="player-pokemon-list"></div>
         </section>
 
-        <!-- ─── 전투 ───────────────── -->
-        <section id="battle-section">
+        <!-- 전투 -->
+        <section id="battle-section" class="hidden">
             <h2>전투</h2>
             <button id="battle-start-btn">전투 시작</button>
 
@@ -52,7 +49,6 @@
                     <img id="enemy-img" src="" alt="enemy" />
                     <div class="hp-wrap"><div id="enemy-hp-bar" class="hp-bar"></div></div>
                 </div>
-
                 <div class="battle-side">
                     <h3 id="player-name"></h3>
                     <img id="player-img" src="" alt="player" />
