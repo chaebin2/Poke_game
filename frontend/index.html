@@ -7,11 +7,28 @@
 </head>
 <body class="default-background">
     <div id="main-screen">
+
         <h1>포켓몬 전투 시뮬레이터</h1>
 
         <div id="money-display">보유 금액: <span id="money-amount">로딩 중...</span></div>
         <div id="selected-pokemon"></div>
 
+        <!-- ─── ① 시작 화면 ─── -->
+        <section id="start-screen">
+            <h1>포켓몬 전투 시뮬레이터</h1>
+            <button id="start-btn">게임 시작</button>
+        </section>
+
+        <!-- ─── ② 메인 화면 ─── -->
+        <div id="main-screen" class="hidden"><!-- ← 처음엔 숨김 -->
+            <div id="money-display">보유 금액: <span id="money-amount">0G</span></div>
+            <div id="selected-pokemon"></div>
+
+        <!-- … main-screen 안쪽 상단에 내비게이션 버튼 2개 추가 -->
+        <div id="nav-btns">
+            <button id="nav-shop-btn">상점</button>
+            <button id="nav-battle-btn">전투하기</button>
+        </div>
         <!-- ─── 상점 ───────────────── -->
         <section id="shop-section">
             <h2>상점</h2>

@@ -48,6 +48,18 @@ button {
     cursor: pointer;
 }
 
+#nav-btns {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 16px 0
+}
+
+#nav-btns button {
+    min-width: 120px
+}
+
+
 .shop-card {
     border: 1px solid #ccc;
     padding: 10px;
@@ -96,7 +108,16 @@ button {
 .hidden {
     display: none;
 }
+#start-screen{
+  text-align:center;
+  margin-top:25vh;
+}
 
+#start-screen button{
+  padding:14px 28px;
+  font-size:1.2rem;
+  cursor:pointer;
+}
 #selected-pokemon {
     text-align: center;
     margin-top: 12px

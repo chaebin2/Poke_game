@@ -1,6 +1,9 @@
 ﻿// 📄 frontend/js/main.js
+let myPokemonCount = 0;
 
 document.addEventListener("DOMContentLoaded", async () => {
+  const startBtn = document.getElementById("start-btn");
+  startBtn.addEventListener("click", initGame);
   switchBackground("default");
   await loadMoney();
   await loadShop();
@@ -43,6 +46,8 @@ async function loadShop() {
     console.error("/shop 연동 오류", err);
   }
 }
+
+
 
 function renderShop(shopList) {
   const shopContainer = document.getElementById("shop-list");
@@ -131,4 +136,57 @@ async function startBattle() {
 function renderBattleLog(logData) {
   const log = document.getElementById("battle-log");
   log.innerText = logData.output || JSON.stringify(logData);
+}
+
+async function initGame() {
+  // 화면 전환
+  document.getElementById("start-screen").classList.add("hidden");
+  document.getElementById("main-screen").classList.remove("hidden");
+  switchBackground?.("default");            // 기본 배경
+
+  /* 네비 버튼 */
+  document.getElementById("nav-shop-btn").onclick   = () => showSection("shop");
+  document.getElementById("nav-battle-btn").onclick = tryEnterBattle;
+
+  // 첫 로딩
+  await loadMoney();
+  await loadShop();
+  await loadMyPokemon();  // 여기서 myPokemonCount 세팅됨
+  showSection("shop");    // 기본은 상점 보기
+}
+
+// ─── 섹션 토글 ────────────────────────────
+function showSection(name){
+  const sec = {
+    shop   : document.getElementById("shop-section"),
+    battle : document.getElementById("battle-section"),
+    player : document.getElementById("player-section")
+  };
+  Object.values(sec).forEach(el=>el.classList.add("hidden"));
+  if(sec[name]) sec[name].classList.remove("hidden");
+
+  if(name==="shop")   switchBackground?.("shop");
+  if(name==="battle") switchBackground?.("battle");
+}
+
+// ─── 전투 버튼 진입 검사 ──────────────────
+function tryEnterBattle(){
+  if(myPokemonCount < 1){
+    alert("상점에서 포켓몬을 구입하십시오.");
+    showSection("shop");
+    return;
+  }
+  showSection("battle");
+}
+
+// ─── loadMyPokemon 수정 → 보유 수 갱신 ───
+async function loadMyPokemon(){
+  try{
+    const res  = await fetch("http://localhost:8000/mypokemon");
+    const data = await res.json();
+    myPokemonCount = Array.isArray(data.pokemon) ? data.pokemon.length : 0;
+    renderMyPokemon(data.pokemon || []);
+  }catch(e){
+    console.error("/mypokemon 오류", e);
+  }
 }
